@@ -1,0 +1,72 @@
+package @{config.basePackage};
+
+import java.persistent.*;
+
+@Table(name = "@{table.tableName}")
+@SupressWarning("serial")
+public class ${table.ext.className} implements java.io.Serializable {
+@if{table.primaryKey != null && table.primaryKey.columnNames.size() > 1}
+	private @{table.ext.className}Id @{table.ext.classNameCamel}Id;
+@end{}@foreach{column : table.columns}@if{!column.primaryKey || table.primaryKey.columnNames.size() == 1}
+	/** @{column.comment == null ? column.columnName : column.comment} */
+	private @{column.ext.propertyType} @{column.ext.propertyName};
+@end{}@end{}@foreach{foreignKey : table.foreignKeys}
+	private @{foreignKey.ext.refClassName} @{foreignKey.ext.refPropertyName};
+@end{}@foreach{refered : table.ext.refereds}@if{refered.isOneToOne}
+	private @{refered.referedClassName} @{refered.referedPropertyName};
+@else{}	
+	private java.util.List<@{refered.referedClassName}> @{refered.referedPropertyName} = new java.util.ArrayList<@{refered.referedClassName}>();
+@end{}@end{}@if{table.primaryKey != null && table.primaryKey.columnNames.size() > 1}
+	@EmbededId
+	public @{table.ext.className}Id get@{table.ext.className}Id() {
+		return @{table.ext.classNameCamel}Id;
+	}
+	
+	public void set@{table.ext.className}Id(@{table.ext.className}Id @{table.ext.classNameCamel}Id) {
+		this.@{table.ext.classNameCamel}Id = @{table.ext.classNameCamel}Id;
+	}
+@end{}@foreach{column : table.columns}@if{!column.primaryKey || table.primaryKey.columnNames.size() == 1}
+	/** @{column.comment == null ? column.name : column.comment} */
+	@if{column.primaryKey}@Id
+	@end{}@if{column.ext.propertyType == "java.util.Date"}@Temporal(TemporalType.TIMESTAMP)
+	@end{}@Column(name = "@{column.name}")
+	public @{column.ext.propertyType} get@{column.ext.propertyNamePascal}() {
+		return @{column.ext.propertyName};
+	}
+	
+	/** @{column.comment == null ? column.name : column.comment} */
+	public void set@{column.ext.propertyNamePascal}(@{column.ext.propertyType} @{column.ext.propertyName}) {
+		this.@{column.ext.propertyName} = @{column.ext.propertyName};
+	}
+@end{}@end{}@foreach{foreignKey : table.foreignKeys}
+	@ManyToOne(fetch = FetchType.LAZY)
+	@if{foreignKey.columnNames.size() == 1}@JoinColumn(name = "@{foreignKey.columnNames[0]}", nullable = false, insertable = false, updatable = false)@else{}@JoinColumns(@foreach{columnName : foreignKey.columnNames}
+		@JoinColumn(name = "@{columnName}", nullable = false, insertable = false, updatable = false)
+	@end{})@end{}
+	public @{foreignKey.ext.refClassName} get@{foreignKey.ext.refPropertyNamePascal}() {
+		return @{foreignKey.ext.refPropertyName};
+	}
+	
+	public void set@{foreignKey.ext.refPropertyNamePascal}(@{foreignKey.ext.refClassName} @{foreignKey.ext.refPropertyName}) {
+		this.@{foreignKey.ext.refPropertyName} = @{foreignKey.ext.refPropertyName};
+	}
+@end{}@foreach{refered : table.ext.refereds}@if{refered.isOneToOne}
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "@{table.ext.classNameCamel}")
+	public @{refered.referedClassName} get@{refered.referedPropertyNamePascal}() {
+		return @{refered.referedPropertyName};
+	}
+	
+	public void set@{refered.referedPropertyNamePascal}(@{refered.referedClassName} @{refered.referedPropertyName}) {
+		this.@{refered.referedPropertyName} = @{refered.referedPropertyName};
+	}
+@else{}
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "@{table.ext.classNameCamel}")
+	public java.util.List<@{refered.referedClassName}> get@{refered.referedPropertyNamePascal}() {
+		return this.@{refered.referedPropertyName}s;
+	}
+	
+	public void set@{refered.referedPropertyNamePascal}(java.util.List<@{refered.referedClassName}> @{refered.referedPropertyName}s) {
+		this.@{refered.referedPropertyName}s = @{refered.referedPropertyName}s;
+	}
+@end{}@end{}
+}

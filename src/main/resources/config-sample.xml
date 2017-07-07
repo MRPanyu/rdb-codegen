@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<properties>
+		<driverClassName></driverClassName>
+	</properties>
+	<reader class="rdb.codegen.reader.MySQLModelReader">
+		<driverClassName>${driverClassName}</driverClassName>
+		<url></url>
+		<username></username>
+		<password></password>
+		<tables>%</tables>
+	</reader>
+	<processor class="">
+	</processor>
+	<processor class="">
+	</processor>
+	<generator class="rdb.codegen.generator.FreemarkerTemplateGenerator">
+		<templateFor>table</templateFor>
+		<templateFile></templateFile>
+		<outputFile></outputFile>
+		<outputWhen></outputWhen>
+	</generator>
+	<generator class="">
+	</generator>
+</configuration>
