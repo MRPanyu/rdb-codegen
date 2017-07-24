@@ -16,6 +16,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+import rdb.codegen.framework.api.Configurable;
 import rdb.codegen.framework.api.ModelProcessor;
 import rdb.codegen.framework.api.ModelReader;
 import rdb.codegen.framework.utils.Utils;
@@ -33,6 +34,7 @@ import rdb.codegen.framework.utils.Utils;
 public class Configuration {
 
 	private Document document;
+	private Properties properties;
 
 	/**
 	 * Read the configuration from file.
@@ -47,20 +49,21 @@ public class Configuration {
 	}
 
 	/**
-	 * Read the configuration from <code>InputStream</code>, note that the
-	 * stream is not closed after read.
+	 * Read the configuration from <code>InputStream</code>, note that the stream is
+	 * not closed after read.
 	 */
 	public void configure(InputStream ins) throws Exception {
 		configure(new InputStreamReader(ins, "UTF-8"));
 	}
 
 	/**
-	 * Read the configuration from <code>Reader</code>, note that the reader is
-	 * not closed after read.
+	 * Read the configuration from <code>Reader</code>, note that the reader is not
+	 * closed after read.
 	 */
 	public void configure(Reader reader) throws Exception {
 		SAXReader r = new SAXReader();
 		document = r.read(reader);
+		properties = readProperties();
 	}
 
 	/**
@@ -72,6 +75,11 @@ public class Configuration {
 		List<ModelProcessor> processors = readObjects("processor", ModelProcessor.class, props);
 		Execution execution = new Execution(readers.get(0), processors);
 		return execution;
+	}
+
+	/** Gets a property after reading config file */
+	public String getProperty(String key) throws Exception {
+		return this.properties.getProperty(key);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -91,7 +99,7 @@ public class Configuration {
 
 	private String fillPropertyPlaceHolder(Properties props, String value) throws Exception {
 		StringBuffer sb = new StringBuffer();
-		Pattern pattern = Pattern.compile("$[{]([^}]+)[}]");
+		Pattern pattern = Pattern.compile("[$][{]([^}]+)[}]");
 		Matcher matcher = pattern.matcher(value);
 		while (matcher.find()) {
 			String propertyName = matcher.group(1);
@@ -122,6 +130,9 @@ public class Configuration {
 				String value = propertyElement.getTextTrim();
 				value = fillPropertyPlaceHolder(props, value);
 				BeanUtils.setProperty(obj, name, value);
+			}
+			if (obj instanceof Configurable) {
+				((Configurable) obj).setConfigProperties(props);
 			}
 			list.add((T) obj);
 		}

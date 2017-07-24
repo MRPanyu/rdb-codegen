@@ -1,25 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
 	<properties>
-		<driverClassName></driverClassName>
+		<basePackage>demo.entity</basePackage>
+		<basePackagePath>demo/entity</basePackagePath>
+		<outputPath>generated-files</outputPath>
+		<outputEncoding>UTF-8</outputEncoding>
 	</properties>
-	<reader class="rdb.codegen.reader.MySQLModelReader">
-		<driverClassName>${driverClassName}</driverClassName>
-		<url></url>
-		<username></username>
-		<password></password>
+
+	<reader class="rdb.codegen.reader.OracleJDBCModelReader">
+		<driverClassName>oracle.jdbc.OracleDriver</driverClassName>
+		<url>jdbc:oracle:thin:@127.0.0.1:1521/pdborcl</url>
+		<user>gateway</user>
+		<password>gateway</password>
 		<tables>%</tables>
 	</reader>
-	<processor class="">
-	</processor>
-	<processor class="">
-	</processor>
-	<generator class="rdb.codegen.generator.FreemarkerTemplateGenerator">
+
+	<processor class="rdb.codegen.processor.DefaultClassNameSetter"></processor>
+	<processor class="rdb.codegen.processor.DefaultPropertyNameSetter"></processor>
+	<processor class="rdb.codegen.processor.DefaultPropertyTypeSetter"></processor>
+	<processor class="rdb.codegen.processor.ForeignKeyReferenceSetter"></processor>
+
+	<processor class="rdb.codegen.processor.MvelTemplateGenerator">
 		<templateFor>table</templateFor>
-		<templateFile></templateFile>
-		<outputFile></outputFile>
-		<outputWhen></outputWhen>
-	</generator>
-	<generator class="">
-	</generator>
+		<templateFile>classpath:mvel-template-jpa-sample/ClassName.java.mvt</templateFile>
+		<outputFile>${outputPath}/${basePackagePath}/@{table.ext.className}.java</outputFile>
+		<outputEncoding>${outputEncoding}</outputEncoding>
+	</processor>
+
+	<processor class="rdb.codegen.processor.MvelTemplateGenerator">
+		<templateFor>table</templateFor>
+		<templateFile>classpath:mvel-template-jpa-sample/ClassNameId.java.mvt</templateFile>
+		<outputFile>${outputPath}/${basePackagePath}/@{table.ext.className}Id.java</outputFile>
+		<outputWhen>table.primaryKey != null &amp;&amp; table.primaryKey.columnNames.size() &gt; 1</outputWhen>
+		<outputEncoding>${outputEncoding}</outputEncoding>
+	</processor>
+
 </configuration>

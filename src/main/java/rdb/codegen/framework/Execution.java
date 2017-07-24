@@ -47,7 +47,10 @@ public class Execution {
 			int processorIndex = 1;
 			for (ModelProcessor processor : processors) {
 				logger.info("Start processor #" + processorIndex + ", class: " + processor.getClass().getName());
-				model = processor.process(model);
+				Database newModel = processor.process(model);
+				if (newModel != null) {
+					model = newModel;
+				}
 				logger.info("Finished processor #" + processorIndex);
 				processorIndex++;
 			}

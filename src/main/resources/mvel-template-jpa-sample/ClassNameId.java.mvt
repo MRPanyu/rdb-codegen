@@ -1,0 +1,23 @@
+package @{config.basePackage};
+
+import java.persistent.*;
+
+@Embedable
+@SupressWarning("serial")
+public class ${table.ext.className}Id implements java.io.Serializable {
+@foreach{column : table.columns}@if{column.primaryKey}
+	/** @{column.comment == null ? column.name : column.comment} */
+	private @{column.ext.propertyType} @{column.ext.propertyName};
+@end{}@end{}@foreach{column : table.columns}@if{column.primaryKey}
+	/** @{column.comment == null ? column.name : column.comment} */
+	@Column(name = "@{column.columnName}", nullable = false)
+	public @{column.ext.propertyType} get@{column.ext.propertyNamePascal}() {
+		return @{column.ext.propertyName};
+	}
+	
+	/** @{column.comment == null ? column.columnName : column.comment} */
+	public void set@{column.ext.propertyNamePascal}(@{column.ext.propertyType} @{column.ext.propertyName}) {
+		this.@{column.ext.propertyName} = @{column.ext.propertyName};
+	}
+@end{}@end{}
+}

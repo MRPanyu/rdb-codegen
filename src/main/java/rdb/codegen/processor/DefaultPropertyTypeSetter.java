@@ -2,6 +2,14 @@ package rdb.codegen.processor;
 
 import java.sql.Types;
 
+/**
+ * Basic property type setter, sets ext property "propertyType" based on jdbc
+ * type.
+ * 
+ * @see AbstractPropertyTypeSetter
+ * @author Panyu
+ *
+ */
 public class DefaultPropertyTypeSetter extends AbstractPropertyTypeSetter {
 
 	@Override

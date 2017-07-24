@@ -1,5 +1,6 @@
 package rdb.codegen.processor;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -46,16 +47,14 @@ public abstract class AbstractTemplateGenerator extends AbstractConfigurableProc
 	}
 
 	/**
-	 * Whether this template generates one for each table or one for whole
-	 * database.
+	 * Whether this template generates one for each table or one for whole database.
 	 */
 	public String getTemplateFor() {
 		return templateFor;
 	}
 
 	/**
-	 * Whether this template generates one for each table or one for whole
-	 * database.
+	 * Whether this template generates one for each table or one for whole database.
 	 */
 	public void setTemplateFor(String templateFor) {
 		if (!templateFor.equalsIgnoreCase(TEMPLATE_FOR_DATABASE) && !templateFor.equalsIgnoreCase(TEMPLATE_FOR_TABLE)) {
@@ -95,8 +94,7 @@ public abstract class AbstractTemplateGenerator extends AbstractConfigurableProc
 
 	/**
 	 * Expression of whether to generate the output file for this table, default
-	 * implementation uses an MVEL({@link https://github.com/mvel/mvel})
-	 * expression.
+	 * implementation uses an MVEL({@link https://github.com/mvel/mvel}) expression.
 	 */
 	public String getOutputWhen() {
 		return outputWhen;
@@ -104,8 +102,7 @@ public abstract class AbstractTemplateGenerator extends AbstractConfigurableProc
 
 	/**
 	 * Expression of whether to generate the output file for this table, default
-	 * implementation uses an MVEL({@link https://github.com/mvel/mvel})
-	 * expression.
+	 * implementation uses an MVEL({@link https://github.com/mvel/mvel}) expression.
 	 */
 	public void setOutputWhen(String outputWhen) {
 		this.outputWhen = outputWhen;
@@ -152,6 +149,8 @@ public abstract class AbstractTemplateGenerator extends AbstractConfigurableProc
 		if (doOutput) {
 			String outputPath = evalOutputFile(context);
 			logger.info("Writing output file: " + outputPath);
+			File outFile = new File(outputPath);
+			outFile.getParentFile().mkdirs();
 			Writer output = new OutputStreamWriter(new FileOutputStream(outputPath), outputEncoding);
 			try {
 				applyTemplate(context, templateContent, output);
@@ -182,17 +181,16 @@ public abstract class AbstractTemplateGenerator extends AbstractConfigurableProc
 			throws Exception;
 
 	/**
-	 * Controls how to evaluate the <code>outputWhen</code> expression. The
-	 * default implementation accepts an MVEL expression which returns boolean
-	 * value.
+	 * Controls how to evaluate the <code>outputWhen</code> expression. The default
+	 * implementation accepts an MVEL expression which returns boolean value.
 	 */
 	protected boolean evalOutputWhen(Map<String, Object> context) {
 		return (Boolean) MVEL.eval(outputWhen, context);
 	}
 
 	/**
-	 * Controls how to evaluate the <code>outputPath</code> expression. The
-	 * default implementation accepts an MVEL template expression.
+	 * Controls how to evaluate the <code>outputPath</code> expression. The default
+	 * implementation accepts an MVEL template expression.
 	 */
 	protected String evalOutputFile(Map<String, Object> context) {
 		return TemplateRuntime.eval(outputFile, context).toString();
