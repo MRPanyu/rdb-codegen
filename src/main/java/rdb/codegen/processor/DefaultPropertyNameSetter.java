@@ -31,6 +31,7 @@ public class DefaultPropertyNameSetter extends AbstractConfigurableProcessor {
 		for (Table table : model.getTables()) {
 			for (Column column : table.getColumns()) {
 				String columnName = column.getColumnName();
+				columnName = columnName.toLowerCase();
 				String[] arrColumnName = columnName.split("_");
 				StringBuilder sb = new StringBuilder();
 				for (String part : arrColumnName) {
