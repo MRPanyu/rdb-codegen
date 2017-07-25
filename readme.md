@@ -1,5 +1,7 @@
 # A simple customizable code generator for relational databases
 
+See rdb.codegen.framework.SampleMain for usage.
+
 ## With very simple design:
 
 * Model: Database, Table, Column, PrimaryKey, ForeignKey, Unique, each with an associated java class. All of these are Extendible entities (which has an "ext" map property for setting arbitrary values).
