@@ -7,8 +7,10 @@ import org.apache.commons.io.FileUtils;
 public class SampleMain {
 
 	public static void main(String[] args) throws Exception {
-		Configuration conf = new Configuration();
-		conf.configure("classpath:config-sample.xml");
+		YmlConfiguration conf = new YmlConfiguration();
+		conf.configure("classpath:config-sample.yml");
+		// XmlConfiguration conf = new XmlConfiguration();
+		// conf.configure("classpath:config-sample.xml");
 
 		File outputPath = new File(conf.getProperty("outputPath"));
 		if (outputPath.isDirectory()) {

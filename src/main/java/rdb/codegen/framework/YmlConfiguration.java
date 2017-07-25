@@ -6,15 +6,14 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.dom4j.Document;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+import org.yaml.snakeyaml.Yaml;
 
 import rdb.codegen.framework.api.Configurable;
 import rdb.codegen.framework.api.ModelProcessor;
@@ -22,18 +21,17 @@ import rdb.codegen.framework.api.ModelReader;
 import rdb.codegen.framework.utils.Utils;
 
 /**
- * <code>Configuration</code> class builds an <code>Execution</code> from
- * configuration xml file.
+ * This class builds an <code>Execution</code> from configuration yml file.
  * <p>
- * For sample of configuation file, see config-sample.xml in resources folder.
+ * For sample of configuation file, see config-sample.yml in resources folder.
  * </p>
  * 
  * @author Panyu
  *
  */
-public class Configuration {
+public class YmlConfiguration {
 
-	private Document document;
+	private Map<String, Object> config;
 	private Properties properties;
 
 	/**
@@ -60,9 +58,9 @@ public class Configuration {
 	 * Read the configuration from <code>Reader</code>, note that the reader is not
 	 * closed after read.
 	 */
+	@SuppressWarnings("unchecked")
 	public void configure(Reader reader) throws Exception {
-		SAXReader r = new SAXReader();
-		document = r.read(reader);
+		config = (Map<String, Object>) new Yaml().load(reader);
 		properties = readProperties();
 	}
 
@@ -72,7 +70,7 @@ public class Configuration {
 	public Execution buildExecution() throws Exception {
 		Properties props = readProperties();
 		List<ModelReader> readers = readObjects("reader", ModelReader.class, props);
-		List<ModelProcessor> processors = readObjects("processor", ModelProcessor.class, props);
+		List<ModelProcessor> processors = readObjects("processors", ModelProcessor.class, props);
 		Execution execution = new Execution(readers.get(0), processors);
 		return execution;
 	}
@@ -85,14 +83,9 @@ public class Configuration {
 	@SuppressWarnings("unchecked")
 	private Properties readProperties() throws Exception {
 		Properties props = new Properties();
-		Element elProperties = document.getRootElement().element("properties");
-		if (elProperties != null) {
-			List<Element> els = elProperties.elements();
-			for (Element el : els) {
-				String name = el.getName();
-				String value = el.getTextTrim();
-				props.setProperty(name, value);
-			}
+		Map<String, Object> p = (Map<String, Object>) config.get("properties");
+		if (p != null) {
+			props.putAll(p);
 		}
 		return props;
 	}
@@ -114,20 +107,25 @@ public class Configuration {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> List<T> readObjects(String elementName, Class<T> baseType, Properties props) throws Exception {
+	private <T> List<T> readObjects(String propName, Class<T> baseType, Properties props) throws Exception {
 		List<T> list = new ArrayList<T>();
-		List<Element> elements = document.getRootElement().elements(elementName);
-		for (Element element : elements) {
-			String className = element.attributeValue("class");
+		Object o = config.get(propName);
+		List<Map<String, Object>> ls = new ArrayList<Map<String, Object>>();
+		if (o instanceof List) {
+			ls = (List<Map<String, Object>>) o;
+		} else {
+			ls.add((Map<String, Object>) o);
+		}
+		for (Map<String, Object> el : ls) {
+			String className = (String) el.get("class");
 			if (StringUtils.isBlank(className)) {
-				throw new RuntimeException("No class attribute defined for element <" + elementName + ">");
+				throw new RuntimeException("No class attribute defined");
 			}
 			Class<?> cls = Class.forName(className);
 			Object obj = cls.newInstance();
-			List<Element> propertyElements = element.elements();
-			for (Element propertyElement : propertyElements) {
-				String name = propertyElement.getName();
-				String value = propertyElement.getTextTrim();
+			for (Map.Entry<String, Object> entry : el.entrySet()) {
+				String name = entry.getKey();
+				String value = StringUtils.trimToEmpty((String) entry.getValue());
 				value = fillPropertyPlaceHolder(props, value);
 				BeanUtils.setProperty(obj, name, value);
 			}
@@ -138,5 +136,4 @@ public class Configuration {
 		}
 		return list;
 	}
-
 }

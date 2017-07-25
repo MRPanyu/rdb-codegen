@@ -1,0 +1,40 @@
+# properties which can be used as ${} placeholders in config file and template files
+properties:
+    basePackage: demo.entity
+    basePackagePath: demo/entity
+    outputPath: generated-files
+    outputEncoding: UTF-8
+
+# The reader fetches a Database model from any source
+reader:
+    class: rdb.codegen.reader.MySqlJDBCModelReader
+    driverClassName: com.mysql.jdbc.Driver
+    url: "jdbc:mysql://127.0.0.1:3306/test"
+    user: test
+    password: test
+    schema: test
+    tables: "%"
+
+# Processors do arbitrary work with the Database model, such as model enhancement or generating file
+processors:
+    # These processors enhances the model, see javadoc for description
+    - class: rdb.codegen.processor.DefaultClassNameSetter
+    - class: rdb.codegen.processor.DefaultPropertyNameSetter
+    - class: rdb.codegen.processor.DefaultPropertyTypeSetter
+    - class: rdb.codegen.processor.ForeignKeyReferenceSetter
+    
+    # These processors generates file based on template
+    - class: rdb.codegen.processor.MvelTemplateGenerator
+      # Whether this template processes on one table or the whole database
+      templateFor: table
+      templateFile: "classpath:mvel-template-jpa-sample/ClassName.java.mvt"
+      outputFile: "${outputPath}/${basePackagePath}/@{table.ext.className}.java"
+      outputEncoding: "${outputEncoding}"
+      
+    - class: rdb.codegen.processor.MvelTemplateGenerator
+      templateFor: table
+      templateFile: "classpath:mvel-template-jpa-sample/ClassNameId.java.mvt"
+      outputFile: "${outputPath}/${basePackagePath}/@{table.ext.className}Id.java"
+      #  An expression to determine whether the template will run on this table
+      outputWhen: "table.primaryKey != null && table.primaryKey.columnNames.size() > 1"
+      outputEncoding: "${outputEncoding}"
