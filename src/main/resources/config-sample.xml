@@ -8,6 +8,16 @@
 		<outputEncoding>UTF-8</outputEncoding>
 	</properties>
 
+	<reader class="rdb.codegen.reader.MySqlJDBCModelReader">
+		<driverClassName>com.mysql.jdbc.Driver</driverClassName>
+		<url>jdbc:mysql://127.0.0.1:3306/test</url>
+		<user>test</user>
+		<password>test</password>
+		<schema>test</schema>
+		<tables>%</tables>
+	</reader>
+
+	<!-- 
 	<reader class="rdb.codegen.reader.OracleJDBCModelReader">
 		<driverClassName>oracle.jdbc.OracleDriver</driverClassName>
 		<url>jdbc:oracle:thin:@127.0.0.1:1521/pdborcl</url>
@@ -15,6 +25,7 @@
 		<password>gateway</password>
 		<tables>%</tables>
 	</reader>
+	 -->
 
 	<processor class="rdb.codegen.processor.DefaultClassNameSetter"></processor>
 	<processor class="rdb.codegen.processor.DefaultPropertyNameSetter"></processor>
@@ -32,7 +43,7 @@
 		<templateFor>table</templateFor>
 		<templateFile>classpath:mvel-template-jpa-sample/ClassNameId.java.mvt</templateFile>
 		<outputFile>${outputPath}/${basePackagePath}/@{table.ext.className}Id.java</outputFile>
-		<outputWhen>table.primaryKey != null &amp;&amp; table.primaryKey.columnNames.size() &gt; 1</outputWhen>
+		<outputWhen><![CDATA[table.primaryKey != null && table.primaryKey.columnNames.size() > 1]]></outputWhen>
 		<outputEncoding>${outputEncoding}</outputEncoding>
 	</processor>
 

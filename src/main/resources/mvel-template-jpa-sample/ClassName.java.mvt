@@ -13,7 +13,7 @@ public class ${table.ext.className} implements java.io.Serializable {
 @end{}@end{}@foreach{foreignKey : table.foreignKeys}
 	private @{foreignKey.ext.referenceTable.ext.className} @{foreignKey.ext.referenceTable.ext.classNameCamel};
 @end{}@foreach{referer : table.ext.referers}
-	private java.util.List<@{referer.className}> @{referer.classNameCamel}List = new java.util.ArrayList<@{referer.className}>();
+	private java.util.List<@{referer.ext.className}> @{referer.ext.classNameCamel}List = new java.util.ArrayList<@{referer.ext.className}>();
 @end{}@if{table.primaryKey != null && table.primaryKey.columnNames.size() > 1}
 	@EmbededId
 	public @{table.ext.className}Id get@{table.ext.className}Id() {
@@ -50,12 +50,12 @@ public class ${table.ext.className} implements java.io.Serializable {
 	}
 @end{}@foreach{referer : table.ext.referers}
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "@{table.ext.classNameCamel}")
-	public java.util.List<@{referer.className}> get@{referer.className}() {
-		return this.@{referer.classNameCamel}List;
+	public java.util.List<@{referer.ext.className}> get@{referer.ext.className}() {
+		return this.@{referer.ext.classNameCamel}List;
 	}
 	
-	public void set@{referer.className}(java.util.List<@{referer.className}> @{referer.classNameCamel}List) {
-		this.@{referer.classNameCamel}List = @{referer.classNameCamel}List;
+	public void set@{referer.ext.className}(java.util.List<@{referer.ext.className}> @{referer.ext.classNameCamel}List) {
+		this.@{referer.ext.classNameCamel}List = @{referer.ext.classNameCamel}List;
 	}
 @end{}
 }
