@@ -3,9 +3,12 @@
 	<title>Database Document</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<style type="text/css">
+		body {
+			overflow-y:hidden;
+		}
 		div.div_menu {
-			width:240px;
-			height:600px;
+			width:250px;
+			height:100%;
 			overflow-y:scroll;
 			position:absolute;
 			font-size:12px;
@@ -20,13 +23,21 @@
 		div.div_menu ul li {
 			margin-bottom:10px;
 		}
+		div.div_tables {
+			width:780px;
+			height:100%;
+			overflow-y:scroll;
+			position:absolute;
+			left:250px;
+			padding-left:20px;
+		}
 		table.tbl_table {
-			width:800px;
+			width:750px;
 			border:1px solid #000000;
 			border-collapse:collapse;
 			font-size:14px;
-			margin-left:250px;
-			margin-bottom:20px;
+			margin-top:10px;
+			margin-bottom:10px;
 		}
 		table.tbl_table th,td {
 			border:1px solid #000000;
@@ -41,24 +52,34 @@
 		}
 	</style>
 	<script type="text/javascript">
-		function init() {
-			document.getElementById("div_menu").style.height = document.body.clientHeight;
-		}
-		window.onresize = init;
-		window.onscroll = function() {
-			document.getElementById("div_menu").style.top = document.body.scrollTop;
+		var menuClosed = false;
+		function toggleMenu() {
+			if(menuClosed) {
+				document.getElementById('div_menu').style.display='';
+				document.getElementById('div_tables').style.left='250';
+				menuClosed = false;
+			} else {
+				document.getElementById('div_menu').style.display='none';
+				document.getElementById('div_tables').style.left='0';
+				menuClosed = true;
+			}
 		}
 	</script>
 </head>
-<body onload="init()">
+<body>
 	<div id="div_menu" class="div_menu">
-		<h1>目录</h1>
+		<div style="margin-top:10px;">
+			<h1 style="display:inline;">目录</h1>
+			<a href="javascript:void(0)" onclick="toggleMenu()">(隐藏)</a>
+		</div>
 		<ul>
 		@foreach{table : database.tables}
 		<li><a href="#@{table.tableName}">@{table.comment}: @{table.tableName}</a></li>
 		@end{}
 		</ul>
 	</div>
+	<div id="div_tables" class="div_tables">
+	<div style="font-size:12px;margin-top:10px;"><a href="javascript:void(0)" onclick="toggleMenu()">显示/隐藏目录</a></div>
 	@foreach{table : database.tables}
 	<table class="tbl_table">
 		<thead>
@@ -79,12 +100,13 @@
 				<td>@{column.columnName}</td>
 				<td>@{column.dbType}@if{column.precision > 0}(@{column.precision}@if{column.scale > 0},@{column.scale}@end{})@elseif{column.length > 0}(@{column.length})@end{}</td>
 				<td>@if{column.nullable}Y@else{}N@end{}</td>
-				<td>@if{column.primaryKey}PK@if{column.autoIncrement},自增@end{}@elseif{column.indexed}IDX@end{}</td>
+				<td>@if{column.primaryKey}PK@if{column.autoIncrement}, A_I@end{}@elseif{column.indexed}IDX@end{}</td>
 				<td>@{column.comment}</td>
 			</tr>
 			@end{}
 		</tbody>
 	</table>
 	@end{}
+	</div>
 </body>
 </html>
