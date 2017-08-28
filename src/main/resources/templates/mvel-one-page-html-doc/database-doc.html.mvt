@@ -99,7 +99,7 @@
 			<tr>
 				<td>@{column.columnName}</td>
 				<td>@{column.dbType}@if{column.precision > 0}(@{column.precision}@if{column.scale > 0},@{column.scale}@end{})@elseif{column.length > 0}(@{column.length})@end{}</td>
-				<td>@if{column.nullable}Y@else{}N@end{}</td>
+				<td>@if{column.nullable}Y@end{}</td>
 				<td>@if{column.primaryKey}PK@if{column.autoIncrement}, A_I@end{}@elseif{column.indexed}IDX@end{}</td>
 				<td>@{column.comment}</td>
 			</tr>
