@@ -1,0 +1,90 @@
+<html>
+<head>
+	<title>Database Document</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+	<style type="text/css">
+		div.div_menu {
+			width:240px;
+			height:600px;
+			overflow-y:scroll;
+			position:absolute;
+			font-size:12px;
+		}
+		div.div_menu h1 {
+			font-size:20px;
+			font-weight:bold;
+		}
+		div.div_menu ul {
+			padding-left:15px;
+		}
+		div.div_menu ul li {
+			margin-bottom:10px;
+		}
+		table.tbl_table {
+			width:800px;
+			border:1px solid #000000;
+			border-collapse:collapse;
+			font-size:14px;
+			margin-left:250px;
+			margin-bottom:20px;
+		}
+		table.tbl_table th,td {
+			border:1px solid #000000;
+		}
+		table.tbl_table th {
+			background-color:#cccccc;
+			font-weight:bold;
+		}
+		table.tbl_table th.th_tablename {
+			font-size:16px;
+			text-align:left;
+		}
+	</style>
+	<script type="text/javascript">
+		function init() {
+			document.getElementById("div_menu").style.height = document.body.clientHeight;
+		}
+		window.onresize = init;
+		window.onscroll = function() {
+			document.getElementById("div_menu").style.top = document.body.scrollTop;
+		}
+	</script>
+</head>
+<body onload="init()">
+	<div id="div_menu" class="div_menu">
+		<h1>目录</h1>
+		<ul>
+		@foreach{table : database.tables}
+		<li><a href="#@{table.tableName}">@{table.comment}: @{table.tableName}</a></li>
+		@end{}
+		</ul>
+	</div>
+	@foreach{table : database.tables}
+	<table class="tbl_table">
+		<thead>
+			<tr>
+				<th colspan="5" class="th_tablename"><a name="@{table.tableName}">@{table.comment}: @{table.tableName}</a></th>
+			</tr>
+			<tr>
+				<th style="width:20%">列名</th>
+				<th style="width:20%">类型</th>
+				<th style="width:10%">可空</th>
+				<th style="width:10%">属性</th>
+				<th style="width:40%">注释</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach{column : table.columns}
+			<tr>
+				<td>@{column.columnName}</td>
+				<td>@{column.dbType}@if{column.precision > 0}(@{column.precision}@if{column.scale > 0},@{column.scale}@end{})@elseif{column.length > 0}(@{column.length})@end{}</td>
+				<td>@if{column.nullable}Y@else{}N@end{}</td>
+				<td>@if{column.primaryKey}PK@if{column.autoIncrement},自增@end{}@elseif{column.indexed}IDX@end{}</td>
+				<td>@{column.comment}</td>
+			</tr>
+			@end{}
+		</tbody>
+	</table>
+	@end{}
+</body>
+</html>

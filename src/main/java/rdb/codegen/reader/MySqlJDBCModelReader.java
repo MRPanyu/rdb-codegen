@@ -56,7 +56,7 @@ public class MySqlJDBCModelReader extends AbstractJDBCModelReader {
 
 	private void readTableColumns(Connection conn, Table table) throws Exception {
 		PreparedStatement ps = conn.prepareStatement(
-				"select column_name, data_type, character_maximum_length, numeric_precision, numeric_scale, is_nullable, column_default, column_comment, ordinal_position from information_schema.COLUMNS where table_schema=? and table_name=? order by ordinal_position");
+				"select column_name, data_type, character_maximum_length, numeric_precision, numeric_scale, is_nullable, column_default, column_comment, extra, column_key, ordinal_position from information_schema.COLUMNS where table_schema=? and table_name=? order by ordinal_position");
 		ps.setString(1, getSchema());
 		ps.setString(2, table.getTableName());
 		ResultSet rs = ps.executeQuery();
@@ -70,6 +70,17 @@ public class MySqlJDBCModelReader extends AbstractJDBCModelReader {
 			column.setNullable("YES".equalsIgnoreCase(rs.getString(6)));
 			column.setDefaultValue(rs.getString(7));
 			column.setComment(rs.getString(8));
+			String extra = rs.getString(9);
+			if (extra != null && extra.contains("auto_increment")) {
+				column.setAutoIncrement(true);
+			}
+			String columnKey = rs.getString(10);
+			if ("PRI".equals(columnKey)) {
+				column.setPrimaryKey(true);
+				column.setIndexed(true);
+			} else if ("MUL".equals(columnKey)) {
+				column.setIndexed(true);
+			}
 			table.getColumns().add(column);
 		}
 		rs.close();

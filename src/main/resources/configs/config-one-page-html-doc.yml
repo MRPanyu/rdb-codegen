@@ -1,0 +1,19 @@
+properties:
+    outputPath: generated-files
+    outputEncoding: UTF-8
+
+reader:
+    class: rdb.codegen.reader.MySqlJDBCModelReader
+    driverClassName: com.mysql.jdbc.Driver
+    url: "jdbc:mysql://127.0.0.1:3306/product_factory"
+    user: "product_factory"
+    password: "product_factory"
+    schema: "product_factory"
+    tables: "%"
+
+processors:
+    - class: rdb.codegen.processor.MvelTemplateGenerator
+      templateFor: database
+      templateFile: "classpath:templates/mvel-one-page-html-doc/database-doc.html.mvt"
+      outputFile: "${outputPath}/database-doc.html"
+      outputEncoding: "${outputEncoding}"
