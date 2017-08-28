@@ -8,9 +8,9 @@ public class SampleMain {
 
 	public static void main(String[] args) throws Exception {
 		YmlConfiguration conf = new YmlConfiguration();
-		conf.configure("classpath:config-sample.yml");
+		conf.configure("classpath:configs/config-sample.yml");
 		// XmlConfiguration conf = new XmlConfiguration();
-		// conf.configure("classpath:config-sample.xml");
+		// conf.configure("classpath:configs/config-sample.xml");
 
 		File outputPath = new File(conf.getProperty("outputPath"));
 		if (outputPath.isDirectory()) {
