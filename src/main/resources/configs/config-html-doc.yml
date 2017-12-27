@@ -14,6 +14,6 @@ reader:
 processors:
     - class: rdb.codegen.processor.MvelTemplateGenerator
       templateFor: database
-      templateFile: "classpath:templates/mvel-one-page-html-doc/database-doc.html.mvt"
+      templateFile: "classpath:templates/html-doc/database-doc.html.mvt"
       outputFile: "${outputPath}/database-doc.html"
       outputEncoding: "${outputEncoding}"

@@ -40,14 +40,14 @@
 	<processor class="rdb.codegen.processor.MvelTemplateGenerator">
 		<!-- Whether this template processes on one table or the whole database -->
 		<templateFor>table</templateFor>
-		<templateFile>classpath:templates/mvel-template-jpa-sample/ClassName.java.mvt</templateFile>
+		<templateFile>classpath:templates/jpa-entity/ClassName.java.mvt</templateFile>
 		<outputFile>${outputPath}/${basePackagePath}/@{table.ext.className}.java</outputFile>
 		<outputEncoding>${outputEncoding}</outputEncoding>
 	</processor>
 
 	<processor class="rdb.codegen.processor.MvelTemplateGenerator">
 		<templateFor>table</templateFor>
-		<templateFile>classpath:templates/mvel-template-jpa-sample/ClassNameId.java.mvt</templateFile>
+		<templateFile>classpath:templates/jpa-entity/ClassNameId.java.mvt</templateFile>
 		<outputFile>${outputPath}/${basePackagePath}/@{table.ext.className}Id.java</outputFile>
 		<!-- An expression to determine whether the template will run on this table -->
 		<outputWhen><![CDATA[table.primaryKey != null && table.primaryKey.columnNames.size() > 1]]></outputWhen>
