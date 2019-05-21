@@ -112,6 +112,8 @@ public class OracleJDBCModelReader extends AbstractJDBCModelReader {
 				}
 			}
 		}
+		rs.close();
+		ps.close();
 	}
 
 	private void readTableConstraints(Connection conn, Table table) throws Exception {
@@ -204,6 +206,7 @@ public class OracleJDBCModelReader extends AbstractJDBCModelReader {
 			}
 			rs.close();
 		}
+		ps.close();
 	}
 
 }

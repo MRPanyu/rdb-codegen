@@ -24,7 +24,7 @@ public class ${table.ext.className} implements java.io.Serializable {
 		this.@{table.ext.classNameCamel}Id = @{table.ext.classNameCamel}Id;
 	}
 @end{}@foreach{column : table.columns}@if{!column.primaryKey || table.primaryKey.columnNames.size() == 1}
-	/** @{column.comment == null ? column.name : column.comment} */
+	/** @{column.comment == null ? column.columnName : column.comment} */
 	@if{column.primaryKey}@Id
 	@end{}@if{column.ext.propertyType == "java.util.Date"}@Temporal(TemporalType.TIMESTAMP)
 	@end{}@Column(name = "@{column.columnName}")

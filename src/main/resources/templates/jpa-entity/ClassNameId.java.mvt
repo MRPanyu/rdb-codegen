@@ -9,7 +9,7 @@ public class ${table.ext.className}Id implements java.io.Serializable {
 	/** @{column.comment == null ? column.name : column.comment} */
 	private @{column.ext.propertyType} @{column.ext.propertyName};
 @end{}@end{}@foreach{column : table.columns}@if{column.primaryKey}
-	/** @{column.comment == null ? column.name : column.comment} */
+	/** @{column.comment == null ? column.columnName : column.comment} */
 	@Column(name = "@{column.columnName}", nullable = false)
 	public @{column.ext.propertyType} get@{column.ext.propertyNamePascal}() {
 		return @{column.ext.propertyName};
