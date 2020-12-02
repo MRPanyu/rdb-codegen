@@ -1,0 +1,49 @@
+# 基本属性配置，如输出的目录，包结构等
+properties:
+    basePackage: com.sinosoft.rm.common
+    basePackagePath: com/sinosoft/rm/common
+    outputPath: generated-files-mybatis
+    outputEncoding: UTF-8
+
+# 数据来源
+reader:
+    class: rdb.codegen.reader.OracleJDBCModelReader
+    driverClassName: com.mysql.jdbc.Driver
+    url: "jdbc:oracle:thin:@//139.226.186.152:1521/XE"
+    user: "zzfwrm"
+    password: "sinosoft"
+    schema: "zzfw"
+    tables: "%"
+
+# 处理流程
+processors:
+    # 前置处理，用于数据结构模型增强
+    - class: rdb.codegen.processor.DefaultClassNameSetter
+    - class: rdb.codegen.processor.DefaultPropertyNameSetter
+    - class: rdb.codegen.processor.DefaultPropertyTypeSetter
+    - class: rdb.codegen.processor.ForeignKeyReferenceSetter
+    
+    # 根据模板生成代码
+    - class: rdb.codegen.processor.MvelTemplateGenerator
+      templateFor: table
+      templateFile: "classpath:templates/tk-mybatis-entity/ClassName.java.mvt"
+      outputFile: "${outputPath}/${basePackagePath}/po/@{table.ext.className}.java"
+      outputEncoding: "${outputEncoding}"
+      
+    - class: rdb.codegen.processor.MvelTemplateGenerator
+      templateFor: table
+      templateFile: "classpath:templates/tk-mybatis-entity/ClassNameDao.java.mvt"
+      outputFile: "${outputPath}/${basePackagePath}/dao/@{table.ext.className}Dao.java"
+      outputEncoding: "${outputEncoding}"
+      
+    - class: rdb.codegen.processor.MvelTemplateGenerator
+      templateFor: table
+      templateFile: "classpath:templates/tk-mybatis-entity/ClassNameDao.xml.mvt"
+      outputFile: "${outputPath}/mapper/@{table.ext.className}Dao.xml"
+      outputEncoding: "${outputEncoding}"
+      
+    - class: rdb.codegen.processor.MvelTemplateGenerator
+      templateFor: database
+      templateFile: "classpath:templates/html-doc/database-doc.html.mvt"
+      outputFile: "${outputPath}/db_doc.html"
+      outputEncoding: "${outputEncoding}"

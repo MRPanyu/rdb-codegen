@@ -1,0 +1,8 @@
+package @{config.basePackage}.dao;
+
+import @{config.basePackage}.po.*;
+import tk.mybatis.mapper.common.Mapper;
+
+public interface ${table.ext.className}Dao extends Mapper<${table.ext.className}> {
+
+}

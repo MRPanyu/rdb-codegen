@@ -1,0 +1,23 @@
+package @{config.basePackage}.po;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import javax.persistence.Table;
+import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+
+import lombok.Data;
+
+/** @{table.comment} */
+@Data
+@Table(name = "@{table.tableName}")
+@@SuppressWarnings("serial")
+public class ${table.ext.className} implements java.io.Serializable {
+@foreach{column : table.columns}
+	/** @{column.comment == null ? column.columnName : column.comment} */
+	@if{column.primaryKey}@Id
+	@end{}private @{column.ext.propertyType} @{column.ext.propertyName};
+@end{}
+}
